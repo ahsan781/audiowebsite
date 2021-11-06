@@ -1,0 +1,224 @@
+{% extends 'index.html' %}
+{% block title %} checkout {% endblock title %}
+{% block body %}
+{% load static %}
+	<style type="text/css">
+		/**
+		 * The CSS shown here will not be introduced in the Quickstart guide, but shows
+		 * how you can use CSS to style your Element's container.
+		 */
+		.StripeElement {
+		  box-sizing: border-box;
+
+		  height: 40px;
+
+		  padding: 10px 12px;
+
+		  border: 1px solid transparent;
+		  border-radius: 4px;
+		  background-color: white;
+
+		  box-shadow: 0 1px 3px 0 #e6ebf1;
+		  -webkit-transition: box-shadow 150ms ease;
+		  transition: box-shadow 150ms ease;
+		}
+
+		.StripeElement--focus {
+		  box-shadow: 0 1px 3px 0 #cfd7df;
+		}
+
+		.StripeElement--invalid {
+		  border-color: #fa755a;
+		}
+
+		.StripeElement--webkit-autofill {
+		  background-color: #fefde5 !important;
+		}
+		#button1:focus{
+         background-color:blue;
+		}
+		#button2:focus{
+         background-color:blue;
+		}
+	</style>
+
+
+	<script src="https://js.stripe.com/v3/"></script>
+
+
+
+    <!-- End Testimonials Section -->
+
+
+<!-- End Pricing Section -->
+<section id="testimonials" class="testimonials">
+      <div class="container" data-aos="fade-up">
+        <div class="section-title">
+         <h2>Make a secure donation</h2>
+        </div>
+
+<!-- ======= Testimonials Section ======= -->
+
+<div id="container">
+		<div class="column-12">
+			<div id="left-wrapper">
+				<div id="left-wrapper-header">
+					<h3>Checkout</h3>
+				</div>
+				<div style="clear:left"></div>
+				<!-- Add form here -->
+				<form action="{% url 'charge' %}" method="post" id="payment-form">
+					{% csrf_token %}
+					<div class="form-field-12">
+					      <ul class="list-group" id="items">
+                             </ul>
+					      <label style='color:white; font-weight:bold;'>Amount:</label>
+						<input style='width:300px;'  class="form-control"  type="text" name="amount" id="amount" value='{{totalprice}}'   readonly>
+						</br>
+						<label style='color:white; font-weight:bold;'>Currency</label>
+						<input style='width:300px;'  class="form-control"  type="text" name="currency"   id="currency" value='USD'  readonly>
+					</div>
+                      </br>
+					<div class="form-field-6">
+						<input style='width:300px;'  class="form-control"  required type="text" name="email" placeholder="Email...">
+					</div></br>
+
+					<div class="form-field-6">
+						<input style='width:300px;'  class="form-control" required type="text" name="nickname" placeholder="Full Name">
+					</div></br>
+
+				  <div>
+				    <label for="card-element" style='color:white; font-weight:bold;'>
+				      Credit or Debit Card
+				    </label>
+				    <div id="card-element">
+				      <!-- A Stripe Element will be inserted here. -->
+				    </div>
+
+				    <!-- Used to display form errors. -->
+				    <div id="card-errors" role="alert"></div>
+				  </div>
+
+				  <div style="clear:left"></div>
+				  <hr>
+
+				 	<input  class="btn btn-success"  style="background-color:#10a195" type="submit" value="Pay {{amount1}}{{payment}} With Card" name="">
+
+				</form></br>
+				<div id="paypal-button-container"></div>
+				
+				<div id="container"></div>
+			</div>
+		</div>
+
+	<!-- Include the PayPal JavaScript SDK -->
+
+
+	<script>
+		// Create a Stripe client.
+		var stripe = Stripe("pk_test_51JbdutCeEoRt8NLMGamiITi2jUe18tOajUWmfshUgrBs3MZ6yYOaUw2Y8G2UyWdJbsspsQ4jkUKhjDjppmn4ZdkG001YCIfeXg");
+
+		// Create an instance of Elements.
+		var elements = stripe.elements();
+		// Custom styling can be passed to options when creating an Element.
+		// (Note that this demo uses a wider set of styles than the guide below.)
+		var style = {
+		  base: {
+		    color: '#32325d',
+		    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+		    fontSmoothing: 'antialiased',
+		    fontSize: '16px',
+		    '::placeholder': {
+		      color: '#aab7c4'
+		    }
+		  },
+		  invalid: {
+		    color: '#fa755a',
+		    iconColor: '#fa755a'
+		  }
+		};
+
+		// Create an instance of the card Element.
+		var card = elements.create('card', {style: style});
+
+		// Add an instance of the card Element into the `card-element` <div>.
+		card.mount('#card-element');
+
+		// Handle real-time validation errors from the card Element.
+		card.addEventListener('change', function(event) {
+		  var displayError = document.getElementById('card-errors');
+		  if (event.error) {
+		    displayError.textContent = event.error.message;
+		  } else {
+		    displayError.textContent = '';
+		  }
+		});
+
+		// Handle form submission.
+		var form = document.getElementById('payment-form');
+		form.addEventListener('submit', function(event) {
+		  event.preventDefault();
+
+		  stripe.createToken(card).then(function(result) {
+		    if (result.error) {
+		      // Inform the user if there was an error.
+		      var errorElement = document.getElementById('card-errors');
+		      errorElement.textContent = result.error.message;
+		    } else {
+		      // Send the token to your server.
+		      stripeTokenHandler(result.token);
+		    }
+		  });
+		});
+      //  function showDiv(divId, element)
+           //  {
+           //   document.getElementById(divId).style.display = element.value == USD ? 'block' : 'none';
+           //  }
+		// Submit the form with the token ID.
+		function stripeTokenHandler(token) {
+		  // Insert the token ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeToken');
+		  hiddenInput.setAttribute('value', token.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+		  form.submit();
+		}
+
+	</script>
+
+{% endblock body %}
+{% block js %}
+<script>
+if (localStorage.getItem('cart') == null) {
+    var cart = {};
+} else {
+    cart = JSON.parse(localStorage.getItem('cart'));
+}
+console.log(cart);
+var sum = 0;
+var totalPrice = 0;
+if ($.isEmptyObject(cart)) {
+    //if object is empty
+    mystr = `<p>Your cart is empty, please add some items to your cart before checking out!</p>`
+    $('#items').append(mystr);
+} else {
+    for (item in cart) {
+        let name = cart[item][1];
+        let qty = cart[item][0];
+        let itemPrice = cart[item][2];
+        let id = cart[item][3];
+        totalPrice = totalPrice  +   itemPrice 
+        sum = sum + qty;
+		mystr1 = `<input type='hidden' name='id' value='${id}'> </input>`
+        $('#items').append(mystr1);
+    }
+}
+
+
+  </script>
+{% endblock js %}
+

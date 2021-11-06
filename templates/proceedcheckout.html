@@ -1,0 +1,95 @@
+{% extends 'index.html' %}
+{% block title %} checkout {% endblock title %}
+{% block body %}
+{% load static %}
+
+
+
+  <div class="ms_weekly_wrapper" style='width:75% ; margin-left:100px;'>
+              <div class="col my-4">
+        <h2>My Awesome Cart Express Checkout </h2>
+        <div class="my-4">
+            <ul class="list-group" id="items">
+            </ul> </br>
+              {% if Couponcode %}
+               <form action="" method="post" name="reg" role="form" class="php-email-form">
+                              {% csrf_token %}
+                   <span style='color:white; font-weight:bold;'>Total Price in doller:<input type="text" name ='totalPrice' style='width:350px; margin-left:120px'  class="form-control" value= {{amount}} readonly></span>
+                   <br>
+                       <button type="submit" class="btn btn-primary" name='proceedcheckout' style='margin-left: 130px;' >Proceed to payment</button>
+     
+                             </br>            
+                            
+            </form>
+            {% else %}
+               <form action="" method="post" name="reg" role="form" class="php-email-form">
+                              {% csrf_token %}
+                   <span style='color:white; font-weight:bold;'>Total Price in doller:<input type="text" name ='totalPrice' id = 'totalPrice'   class="form-control"  readonly></span>
+                             </br>            
+                            <div class="form-group">
+                                <input type="text" name ='Coupon'  placeholder="Add Coupon" class="form-control" ></br>
+                                <button type="submit" class="btn btn-primary" name='apply' >Apply Coupon</button>
+
+                                       
+                            </div>
+                                  <button type="submit" class="btn btn-primary" name='proceedcheckout'  >Proceed to payment</button>
+                                
+                               {% if  message %}
+                               <div class="alert alert-success" role="alert">
+                               {{message}}
+                              </div>
+                       
+            </form>
+            
+             {% endif %}
+            
+            {% endif %}
+              
+        </div>
+                        
+    </div>
+            </div>
+          
+
+
+
+
+
+
+{% endblock body %}
+{% block js %}
+<script>
+if (localStorage.getItem('cart') == null) {
+    var cart = {};
+} else {
+    cart = JSON.parse(localStorage.getItem('cart'));
+}
+console.log(cart);
+var sum = 0;
+var totalPrice = 0;
+if ($.isEmptyObject(cart)) {
+    //if object is empty
+    mystr = `<p>Your cart is empty, please add some items to your cart before checking out!</p>`
+    $('#items').append(mystr);
+} else {
+    for (item in cart) {
+        let name = cart[item][1];
+        let qty = cart[item][0];
+        let itemPrice = cart[item][2];
+        let id = cart[item][3];
+        totalPrice = totalPrice +   itemPrice 
+        sum = sum + qty;
+        mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${name}
+                     <span class="badge badge-primary badge-pill">${itemPrice}</span>
+                </li>`
+        $('#items').append(mystr);
+    }
+}
+document.getElementById('cart').innerHTML = sum 
+document.getElementById('totalPrice').value = totalPrice 
+  </script>
+{% endblock js %}
+
+
+

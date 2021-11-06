@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+{% block title %} Home {% endblock title %}
+{% block body %}
+{% load static %}
+<script>
+{% comment %} console.log('ok'+{{audio}}); {% endcomment %}
+</script>
+          <div class="ms_loader">
+		<div class="wrap">
+		  <img src=" {% static 'images/loader.gif' %} "  alt="">
+		</div>
+	</div>
+        <!----Featured Albumn Section Start---->
+        {% for subprograms in subprogram  %}
+        {% if subprograms.p_status %}
+        {% if subprograms.subprogram_status %}
+        <div class="ms_fea_album_slider padder_top10 ">
+            <div class="ms_heading">
+                <h1 >{{subprograms.name}}</h1>
+                      <p style='color:white; font-weight:bold;'>Price::<span >{{subprograms.price}}$</span> </p>
+                             <span class="veiw_all"><a href={% url 'list' subprograms.id %}>view more</a></span>
+                               <a href="{% url 'list' subprograms.id %}"class="ms_btn login_btn"><span>Detail List</span></a>                   
+                    
+            </div>
+
+           
+            <div class="ms_album_slider swiper-container">
+                <div class="swiper-wrapper">
+          {% for audios in audio %}
+          {% comment %} {% if  %}{% endif %} {% endcomment %}
+            {% if subprograms == audios.subprogram  %}
+                    <div class="swiper-slide">
+                        <div class="ms_rcnt_box">
+                            <div class="ms_rcnt_box_img">
+                                <img src="{{audios.image.url}}" alt="" style='width:350px; height:300px;'>
+                                <div class="ms_main_overlay">
+                                    <div class="ms_box_overlay"></div>
+                                    <div class="ms_more_icon">
+                                        <img src="{% static 'images/svg/more.svg' %} " alt="">
+                                    </div>
+                                    <ul class="more_option">
+                                        <li><a href="#"><span class="opt_icon"><span
+                                                        class="icon icon_fav"></span></span>Add To Favourites</a></li>
+                                        <li><a href="#"><span class="opt_icon"><span
+                                                        class="icon icon_playlst"></span></span>Add To Playlist</a></li>
+                                        <li><a href="#"><span class="opt_icon"><span
+                                                        class="icon icon_share"></span></span>Share</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="ms_rcnt_box_text">
+                                <h3><a  href="album_single.html">Beat::  {{audios.audioname}}</a></h3>
+                                <p>Artist:: {{audios.artistname}}</p>
+                                         </div>
+                        </div>
+                    </div>
+               
+         {% endif %}
+             {% endfor %}
+
+                </div>
+            </div>
+           
+            <!-- Add Arrows -->
+            <div class="swiper-button-next slider_nav_next"></div>
+            <div class="swiper-button-prev slider_nav_prev"></div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+</div>
+<script>
+{% if thank %}
+alert('Thanks for Purchasing Program');
+localStorage.clear();
+{% endif %}
+</script>
+
+{% endblock body %}

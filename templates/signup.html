@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+{% block title %} Signup {% endblock title %}  
+{% block body %}
+     {% load static %}
+ 
+              <div class="ms_loader">
+		<div class="wrap">
+		  <img src=" {% static 'images/loader.gif' %} "  alt="">
+		</div>
+	</div>
+            <!----Upload and Share Wrapper Start---->
+            <div class="ms_upload_wrapper marger_top60">
+            {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+
+      {% if message.tags == "success" %}
+      <strong>Well done!</strong> {{ message}}
+      {% else %}
+      <strong>Error!</strong> {{ message}}
+      {% endif %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+                <div class=" marger_top60" >
+                    <div class="ms_upload_box">
+                        <div class="ms_heading">
+                            <h1>Sign Up</h1>
+                        </div>
+                          <form action="" method="post" name="reg" role="form" >
+                              {% csrf_token %}
+                            <div class="save_input_group">
+                                <input type="text" name="user"  placeholder="Name" class="form-control" required>
+                            </div>
+                          </br>
+                            <div class="save_input_group">
+                               <input type="email" id="email" name="email"  placeholder="Email" class="form-control" required>
+                            </div>
+                            </br>
+                            <div class="save_input_group">
+                                <input type="password" name="password"  placeholder="Password" class="form-control" required>
+                            </div>
+                            </br>
+                            <div class="save_input_group">
+                                <input type="password" name="cpassword"  placeholder="ConfirmPassword" class="form-control" required>
+                            </div>
+                          </br>
+                            <div class="pro-form-btn text-center marger_top15">
+                                <div class="ms_upload_btn">
+                                    <button type="submit" class="ms_btn">SignUp</button>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!----Main div close---->
+        </div>
+        <!----Footer Start---->
+      {% endblock body %}
